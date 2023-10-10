@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadarChart,
-  Radar,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import { PolarAngleAxis, PolarGrid, RadarChart, Radar } from "recharts";
 import { getDataPerformance } from "../../../../../serviceAPI/user";
 import { getFormatedRadarDatas } from "../../../../../config/configDatasRadar";
 import { styled } from "styled-components";
@@ -47,25 +39,7 @@ export default function RadarGraph({ userId }) {
         <PolarAngleAxis
           dataKey="subject"
           tick={{ fill: "white", fontSize: 12, fontWeight: 500 }}
-          // axisLine={false}
-
-          // tickFormatter={(tick, index) => {
-          //   if (index === 0 || index === datasKindValue.length - 1) {
-          //     return (
-          //       <tspan x="0" dy="10">
-          //         {tick}
-          //       </tspan>
-          //     );
-          //   }
-          //   return tick;
-          // }}
-          // tickFormatter={() => {}}
         />
-
-        {/* <Label style={{ fontSize: 30 }} /> */}
-        {/* </PolarAngleAxis> */}
-
-        {/* <PolarRadiusAxis angle={30} tick={false} /> */}
         <Radar
           dataKey="value"
           stroke="#FF0101B2"
