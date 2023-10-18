@@ -16,7 +16,7 @@ const MacroCardStyled = styled.div`
   background-color: #fbfbfb;
   display: flex;
   align-items: center;
-  padding: 32px;
+  padding: 31px;
   column-gap: 24px;
   border-radius: 5px;
   img {
@@ -38,19 +38,23 @@ const MacroCardStyled = styled.div`
       font-weight: 400;
     }
   }
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 1490px) {
+    padding: 25px 31px;
+    height: 100%;
+  }
+  @media screen and (max-width: 1280px) {
     padding: 20px;
+    gap: 20px;
     img {
-      width: 45px;
-      height: 45px;
+      width: 50px;
+      height: 50px;
     }
     .description {
-      line-height: 20px;
       p {
-        font-size: 16px;
+        font-size: 18px;
       }
       span {
-        font-size: 13px;
+        font-size: 12px;
       }
     }
   }

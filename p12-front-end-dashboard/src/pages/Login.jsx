@@ -1,5 +1,5 @@
-import logo from "../../../assets/images/LogoSportSee.png";
-import LoginForm from "./LoginForm.jsx";
+import logo from "../assets/images/LogoSportSee.png";
+import LoginForm from "../components/LoginForm.jsx";
 import { styled } from "styled-components";
 
 export default function Login() {
@@ -14,13 +14,13 @@ export default function Login() {
 const LoginStyled = styled.div`
   background-color: black;
   width: 100vw;
-  height: 100vh;
+  height: 950px;
   max-width: 1600px;
-  min-width: 1024px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 70px;
+  margin: auto;
   img {
     width: 300px;
     height: 100px;
