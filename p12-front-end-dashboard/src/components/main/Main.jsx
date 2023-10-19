@@ -8,6 +8,14 @@ import { styled } from "styled-components";
 export default function Main({ userId }) {
   const [userDatas, setUserDatas] = useState([]);
   const [firstName, setFirstName] = useState();
+  const [errorApi, setErrorApi] = useState(false);
+  const errorMessageStyle = {
+    height: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "30px",
+  };
 
   useEffect(() => {
     getDataUser(userId)
@@ -16,12 +24,12 @@ export default function Main({ userId }) {
         setFirstName(response.data.data.userInfos.firstName);
       })
       .catch((error) => {
-        // const defaultDatas = hardCodeDatas.main.find(
-        //   (data) => data.id === userId
-        // );
-        // setUserDatas(defaultDatas);
+        setErrorApi(true);
       });
   }, [userId]);
+
+  if (errorApi)
+    return <div style={errorMessageStyle}>Données indisponibles ⛑️</div>;
 
   return (
     <MainStyled>
