@@ -9,12 +9,13 @@ import {
   YAxis,
 } from "recharts";
 import { styled } from "styled-components";
-import { getDataActivity } from "../../../../serviceAPI/user";
+import { getDataActivity } from "../../../../serviceAPI/userApiConfig";
 import Header from "./Header";
 import { getFormatedDatasActivity } from "../../../../config/datasConfig";
 
 export default function Weight({ userId }) {
   const [dataActivity, setDataActivity] = useState([]);
+  const [errorDataActivity, setErrorDataActivity] = useState(false);
 
   const CustomTooltipActivity = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -28,67 +29,75 @@ export default function Weight({ userId }) {
     return null;
   };
   useEffect(() => {
-    getDataActivity(userId).then((response) => {
-      const formatedDatas = response.data.data.sessions.map((dataAPI) =>
-        getFormatedDatasActivity(dataAPI)
-      );
-      setDataActivity(formatedDatas);
-    });
+    getDataActivity(userId)
+      .then((response) => {
+        const formatedDatas = response.map((data) =>
+          getFormatedDatasActivity(data)
+        );
+        setDataActivity(formatedDatas);
+      })
+      .catch((error) => {
+        setErrorDataActivity(true);
+      });
   }, [userId]);
 
   return (
     <WeightStyled className="wheight">
       <Header />
-      <ResponsiveContainer width="100%">
-        <BarChart
-          className="barChart"
-          data={dataActivity}
-          barGap={8}
-          margin={{
-            bottom: 15,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis
-            dataKey="day"
-            dy={10}
-            fontSize={14}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
-            dataKey="kilogram"
-            yAxisId="kilogram"
-            orientation="right"
-            axisLine={false}
-            tickLine={false}
-            domain={["dataMin-2", "dataMax+2"]}
-            tickCount={5}
-          />
-          <YAxis
-            dataKey="calories"
-            yAxisId="calories"
-            domain={["dataMin-90", "dataMax+90"]}
-            hide={true}
-          />
-          <Tooltip content={<CustomTooltipActivity />} />
-          <Bar
-            dataKey="kilogram"
-            yAxisId="kilogram"
-            barSize={7}
-            fill="#282D30"
-            radius={[5, 5, 0, 0]}
-          />
-          (
-          <Bar
-            dataKey="calories"
-            yAxisId="calories"
-            barSize={7}
-            fill="#E60000"
-            radius={[5, 5, 0, 0]}
-          />
-        </BarChart>
-      </ResponsiveContainer>
+      {!errorDataActivity ? (
+        <ResponsiveContainer width="100%">
+          <BarChart
+            className="barChart"
+            data={dataActivity}
+            barGap={8}
+            margin={{
+              bottom: 15,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="day"
+              dy={10}
+              fontSize={14}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              dataKey="kilogram"
+              yAxisId="kilogram"
+              orientation="right"
+              axisLine={false}
+              tickLine={false}
+              domain={["dataMin-2", "dataMax+2"]}
+              tickCount={5}
+            />
+            <YAxis
+              dataKey="calories"
+              yAxisId="calories"
+              domain={["dataMin-90", "dataMax+90"]}
+              hide={true}
+            />
+            <Tooltip content={<CustomTooltipActivity />} />
+            <Bar
+              dataKey="kilogram"
+              yAxisId="kilogram"
+              barSize={7}
+              fill="#282D30"
+              radius={[5, 5, 0, 0]}
+            />
+            (
+            <Bar
+              dataKey="calories"
+              yAxisId="calories"
+              barSize={7}
+              fill="#E60000"
+              radius={[5, 5, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <span className="error-message">Données indisponibles ⛑️ </span>
+      )}
     </WeightStyled>
   );
 }
@@ -116,5 +125,9 @@ const WeightStyled = styled.div`
       justify-content: center;
       align-items: center;
     }
+  }
+  .error-message {
+    font-size: 14px;
+    margin: auto;
   }
 `;

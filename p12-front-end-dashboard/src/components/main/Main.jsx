@@ -1,45 +1,38 @@
 import { useEffect, useState } from "react";
 import Macros from "./Macros.jsx";
 import Graphs from "./graphs/Graphs.jsx";
-import { getDataUser } from "../../serviceAPI/user.jsx";
+import { getDataUser } from "../../serviceAPI/userApiConfig.js";
 import { styled } from "styled-components";
-// import { hardCodeDatas } from "../../../../config/defaultDatas";
 
 export default function Main({ userId }) {
   const [userDatas, setUserDatas] = useState([]);
   const [firstName, setFirstName] = useState();
-  const [errorApi, setErrorApi] = useState(false);
-  const errorMessageStyle = {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: "30px",
-  };
+  const [errorDatas, setErrorDatas] = useState(false);
 
   useEffect(() => {
     getDataUser(userId)
       .then((response) => {
-        setUserDatas(response.data.data);
-        setFirstName(response.data.data.userInfos.firstName);
+        setUserDatas(response);
+        setFirstName(response.userInfos.firstName);
       })
       .catch((error) => {
-        setErrorApi(true);
+        setErrorDatas(true);
       });
   }, [userId]);
-
-  if (errorApi)
-    return <div style={errorMessageStyle}>Données indisponibles ⛑️</div>;
 
   return (
     <MainStyled>
       <div className="title">
-        {firstName && (
-          <h2>
-            Bonjour <span>{firstName}</span>
-          </h2>
+        {!errorDatas ? (
+          <>
+            <h2>
+              Bonjour <span>{firstName}</span>
+            </h2>
+            <p>Félicitation ! Vous avez explosé vos objectifs hier 👏</p>
+          </>
+        ) : (
+          <span>Données non disponible ⛑️ </span>
         )}
-        <p>Félicitation ! Vous avez explosé vos objectifs hier 👏</p>
       </div>
       <div className="components-container">
         <Graphs userId={userId} />

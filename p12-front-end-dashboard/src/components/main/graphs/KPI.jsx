@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDataUser } from "../../../serviceAPI/user";
+import { getDataUser } from "../../../serviceAPI/userApiConfig";
 import {
   Legend,
   RadialBar,
@@ -11,14 +11,19 @@ import { formatedScore, radialBarDatas } from "../../../config/datasConfig";
 
 export default function KPI({ userId }) {
   const [userDatas, setUserDatas] = useState([]);
+  const [errorDatas, setErrorDatas] = useState(false);
   const initialRadiusState = { innerRadius: "65%", outerRadius: "80%" };
   const [radius, setRadius] = useState(initialRadiusState);
 
   useEffect(() => {
-    getDataUser(userId).then((response) => {
-      const formatedDatas = formatedScore(response.data.data);
-      setUserDatas(formatedDatas);
-    });
+    getDataUser(userId)
+      .then((response) => {
+        const formatedDatas = formatedScore(response);
+        setUserDatas(formatedDatas);
+      })
+      .catch((error) => {
+        setErrorDatas(true);
+      });
   }, [userId]);
 
   useEffect(() => {
@@ -41,23 +46,29 @@ export default function KPI({ userId }) {
 
   return (
     <KPIStyled>
-      <div className="score-description">
-        <span>{userDatas.todayScore + "%"}</span>
-        <p>
-          de votre
-          <br /> objectif
-        </p>
-      </div>
-      <ResponsiveContainer width="100%">
-        <RadialBarChart
-          innerRadius={radius.innerRadius}
-          outerRadius={radius.outerRadius}
-          data={radialBarDatas(userDatas)}
-        >
-          <RadialBar fill="#FF0000" dataKey="score" cornerRadius={10} />
-          <Legend iconSize={0} verticalAlign="top" align="left" />
-        </RadialBarChart>
-      </ResponsiveContainer>
+      {!errorDatas ? (
+        <>
+          <div className="score-description">
+            <span className="score">{userDatas.todayScore + "%"}</span>
+            <p>
+              de votre
+              <br /> objectif
+            </p>
+          </div>
+          <ResponsiveContainer width="100%">
+            <RadialBarChart
+              innerRadius={radius.innerRadius}
+              outerRadius={radius.outerRadius}
+              data={radialBarDatas(userDatas)}
+            >
+              <RadialBar fill="#FF0000" dataKey="score" cornerRadius={10} />
+              <Legend iconSize={0} verticalAlign="top" align="left" />
+            </RadialBarChart>
+          </ResponsiveContainer>
+        </>
+      ) : (
+        <span className="error-score">Données indisponibles</span>
+      )}
     </KPIStyled>
   );
 }
@@ -82,7 +93,7 @@ const KPIStyled = styled.div`
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    span {
+    .score {
       color: #282d30;
       font-size: 24px;
       font-weight: 700;
@@ -92,5 +103,8 @@ const KPIStyled = styled.div`
       font-size: 13px;
       font-weight: 500;
     }
+  }
+  .error-score {
+    font-size: 14px;
   }
 `;

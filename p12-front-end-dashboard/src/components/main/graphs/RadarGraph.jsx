@@ -6,7 +6,7 @@ import {
   Radar,
   ResponsiveContainer,
 } from "recharts";
-import { getDataPerformance } from "../../../serviceAPI/user";
+import { getDataPerformance } from "../../../serviceAPI/userApiConfig";
 import { getFormatedRadarDatas } from "../../../config/datasConfig";
 import { styled } from "styled-components";
 
@@ -14,14 +14,17 @@ export default function RadarGraph({ userId }) {
   const [datasKindValue, setDatasKindValue] = useState([]);
   const [outerRadius, setOuterRadius] = useState(78);
   const [tickFontSize, setTickFontSize] = useState(12);
+  const [errorDataPerformance, setErrorDataPerformance] = useState(false);
 
   useEffect(() => {
-    getDataPerformance(userId).then((response) => {
-      const datasKind = response.data.data.data.map((item) =>
-        getFormatedRadarDatas(item)
-      );
-      setDatasKindValue(datasKind);
-    });
+    getDataPerformance(userId)
+      .then((response) => {
+        const datasKind = response.map((item) => getFormatedRadarDatas(item));
+        setDatasKindValue(datasKind);
+      })
+      .catch((error) => {
+        setErrorDataPerformance(true);
+      });
   }, [userId]);
 
   useEffect(() => {
@@ -50,16 +53,20 @@ export default function RadarGraph({ userId }) {
 
   return (
     <RadarGraphStyled>
-      <ResponsiveContainer width="100%">
-        <RadarChart outerRadius={outerRadius} data={datasKindValue}>
-          <PolarGrid className="polar-grid" />
-          <PolarAngleAxis
-            dataKey="subject"
-            tick={{ fill: "white", fontSize: tickFontSize, fontWeight: 500 }}
-          />
-          <Radar dataKey="value" fill="#FF0101B2" fillOpacity={0.7} />
-        </RadarChart>
-      </ResponsiveContainer>
+      {!errorDataPerformance ? (
+        <ResponsiveContainer width="100%">
+          <RadarChart outerRadius={outerRadius} data={datasKindValue}>
+            <PolarGrid className="polar-grid" />
+            <PolarAngleAxis
+              dataKey="subject"
+              tick={{ fill: "white", fontSize: tickFontSize, fontWeight: 500 }}
+            />
+            <Radar dataKey="value" fill="#FF0101B2" fillOpacity={0.7} />
+          </RadarChart>
+        </ResponsiveContainer>
+      ) : (
+        <span className="error-message">Données non disponible</span>
+      )}
     </RadarGraphStyled>
   );
 }
@@ -82,5 +89,9 @@ const RadarGraphStyled = styled.div`
     &:nth-child(4) {
       transform: translate(0, 10px);
     }
+  }
+  .error-message {
+    color: white;
+    font-size: 13px;
   }
 `;
