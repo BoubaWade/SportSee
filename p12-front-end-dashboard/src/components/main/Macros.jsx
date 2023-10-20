@@ -17,15 +17,14 @@ export default function Macros({ macrosDatas }) {
 }
 
 const MacrosStyled = styled.div`
+  height: 610px;
   grid-area: 1/2/2/3;
   display: grid;
-  gap: 40px;
+  gap: 30px;
   @media screen and (max-width: 1490px) {
-    height: 540px;
-    gap: 25px;
+    height: 570px;
   }
   @media screen and (max-width: 1280px) {
-    height: 500px;
-    gap: 35px;
+    height: 513px;
   }
 `;
